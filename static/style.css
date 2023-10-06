@@ -1,0 +1,79 @@
+/* style.css */
+
+/* Reset default browser styles */
+body, h1, p, input, button {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.container {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 15px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+  text-align: center;
+  font-size: 2.8rem;
+  color: green;
+  margin-bottom: 20px;
+}
+
+#chatbox {
+  background-color: #fff;
+  padding: 25px;
+  border-radius: 20px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  overflow-y: auto;
+  max-height: 400px;
+}
+
+.message {
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 15px;
+  font-size: 1.1rem;
+  line-height: 1.4;
+}
+
+.received {
+  background-color: #ffe4b5;
+  color: #333;
+}
+
+#user-input-form {
+  display: flex;
+  align-items: center;
+  margin-top: 20px;
+}
+
+#user-input {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  background-color: #f0f0f0;
+  outline: none;
+}
+
+button[type="submit"] {
+  padding: 12px 25px;
+  border: none;
+  border-radius: 15px;
+  background-color: red; /* Change this line to set the button color */
+  color: white;
+  font-size: 1.1rem;
+  cursor: pointer;
+  outline: none;
+}
+
+button[type="submit"]:hover {
+  background-color: red; /* Change this line for the hover color if needed */
+  transform: scale(1.05);
+  transition: transform 0.2s ease-in-out;
+}
