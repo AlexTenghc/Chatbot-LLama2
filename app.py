@@ -2,6 +2,7 @@
 from flask import Flask, render_template, request
 from transformers import AutoTokenizer, AutoModelForCausalLM
 import torch
+from transformers.models.llama.modeling_llama import _make_causal_mask, _expand_mask
 
 #tokenizer = AutoTokenizer.from_pretrained('microsoft/DialoGPT-large')
 #model = AutoModelForCausalLM.from_pretrained('microsoft/DialoGPT-large')
@@ -14,6 +15,35 @@ The following is llama2 version
 '''
 tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-2-7b-chat-hf")
 model = AutoModelForCausalLM.from_pretrained("meta-llama/Llama-2-7b-chat-hf",load_in_4bit=True)
+
+class Info:
+    gradient_checkpointing = None
+    training = None
+
+
+def prepare_decoder_attention_mask(attention_mask, input_shape, inputs_embeds, past_key_values_length):
+        # create causal mask
+        # [bsz, seq_len] -> [bsz, 1, tgt_seq_len, src_seq_len]
+        combined_attention_mask = None
+        if input_shape[-1] > 1:
+            combined_attention_mask = _make_causal_mask(
+                input_shape,
+                inputs_embeds.dtype,
+                device=inputs_embeds.device,
+                past_key_values_length=past_key_values_length,
+            )
+
+        if attention_mask is not None:
+            # [bsz, seq_len] -> [bsz, 1, tgt_seq_len, src_seq_len]
+            expanded_attn_mask = _expand_mask(attention_mask, inputs_embeds.dtype, tgt_len=input_shape[-1]).to(
+                inputs_embeds.device
+            )
+            combined_attention_mask = (
+                expanded_attn_mask if combined_attention_mask is None else expanded_attn_mask + combined_attention_mask
+            )
+
+        return combined_attention_mask
+
 
 import copy
 # Split function of llama2
@@ -422,7 +452,8 @@ def cal2(
 
 
 def myGenerate_v3(part1, part2,part3, input, max_length = 20):
-  input_ids = tokenizer.encode("<startofstring> "+input+" <bot>:", return_tensors="pt").to(device)
+  #input_ids = tokenizer.encode("<startofstring> "+input+" <bot>:", return_tensors="pt").to(device)
+  input_ids = tokenizer.encode("<startofstring> "+input+" <bot>:", return_tensors="pt").to("cuda")
   # Set the maximum length for the generated sequence
   # Disable gradient calculation for faster inference
   with torch.no_grad():
